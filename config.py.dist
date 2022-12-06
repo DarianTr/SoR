@@ -1,0 +1,2 @@
+database_url = "mysql+mysqldb://USER:PASSWORD@hertzmail.info/DATABASE"
+secret_key = "SECRET"
