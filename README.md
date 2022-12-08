@@ -33,3 +33,14 @@ Datei `config.py.dist` nach `config.py` kopieren und
 - `PASSWORD` ersetzen
 - `DATABASE` ersetzen
 - `SECRET` ersetzen
+
+## **Testdaten**
+
+`testData.py` und die csv-dateien in `sampleData` bieten beispiellisten zum testen des algorithmus
+
+```python
+from testData import testData
+td = testData(numberOfStudents)
+td.nameList # Liste mit Namen und Wünschen
+td.workshopList # Liste der Workshops
+```
