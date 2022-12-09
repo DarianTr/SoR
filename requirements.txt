@@ -6,3 +6,4 @@ alembic
 pandas
 flask_alembic
 Mysqlclient
+pymysql
