@@ -24,7 +24,7 @@ class Workshop(database.Model):
     
     
 
-class Schueler(database.Model):
+class Person(database.Model):
     __tablename__ = 'Schueler'
     
     id = Column(INTEGER(10), primary_key=True)
@@ -39,6 +39,9 @@ class Schueler(database.Model):
     zweitwunsch = Column(ForeignKey('Workshop.name'), index = True)
     drittwunsch = Column(ForeignKey('Workshop.name'), index = True)
     projekt = Column(ForeignKey('Workshop.name'), index = True)
+    position = Column(Text)
+    
+    
     wunsch1 = relationship('Workshop', foreign_keys =[erstwunsch])
     wunsch2 = relationship('Workshop', foreign_keys =[zweitwunsch])
     wunsch3 = relationship('Workshop', foreign_keys =[drittwunsch])
