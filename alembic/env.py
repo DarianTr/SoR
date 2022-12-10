@@ -23,7 +23,7 @@ if config.config_file_name is not None:
 folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, folder)
 
-from app import database
+from website import database
 import structure
 import config as conf
 

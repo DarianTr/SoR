@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Date, DateTime, Float, ForeignKey, String, Text, Table, Integer
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.mysql import INTEGER
-from app import database
+from website import database
 from sqlalchemy import create_engine
 from config import database_url
 
@@ -40,7 +40,8 @@ class Person(database.Model):
     drittwunsch = Column(ForeignKey('Workshop.name'), index = True)
     projekt = Column(ForeignKey('Workshop.name'), index = True)
     position = Column(Text)
-    
+    username = Column(Text)
+    password = Column(Text)
     
     wunsch1 = relationship('Workshop', foreign_keys =[erstwunsch])
     wunsch2 = relationship('Workshop', foreign_keys =[zweitwunsch])
