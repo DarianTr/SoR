@@ -5,6 +5,8 @@ from sqlalchemy.dialects.mysql import INTEGER
 from website import database
 from sqlalchemy import create_engine
 from config import database_url
+from flask_login import UserMixin
+from alembic import command
 
 engine = create_engine(database_url, echo=True)
 engine.connect()
@@ -24,8 +26,9 @@ class Workshop(database.Model):
     
     
 
-class Person(database.Model):
-    __tablename__ = 'Schueler'
+class Person(database.Model, UserMixin):
+
+    __tablename__ = 'Person'
     
     id = Column(INTEGER(10), primary_key=True)
     vorname = Column(Text)
@@ -47,10 +50,16 @@ class Person(database.Model):
     wunsch2 = relationship('Workshop', foreign_keys =[zweitwunsch])
     wunsch3 = relationship('Workshop', foreign_keys =[drittwunsch])
     result = relationship('Workshop', foreign_keys =[projekt])
-    # erstwunsch1 = relationship('erstwunsch', primaryjoin='Workshop.name == Schueler.erstwunsch')
-    # zweitwunsch2 = relationship('zweitwunsch', secondary='Workshop', backref='Schueler')
-    # drittwunsch3 = relationship('drittwunsch', secondary='Workshop', backref='Schueler')
-    # projekt4 = relationship('projekt', secondary='Workshop', backref='Schueler')
-    # Workshop1 = relationship("Workshop", primaryjoin='Schuler.zweitwunsch == Workshop.name')
-    # Workshop2 = relationship("Workshop", primaryjoin='Schuler.drittwunsch == Workshop.name')
-    # Workshop3 = relationship("Workshop", primaryjoin='Schuler.projekt == Workshop.name')
+        
+        
+    #def __init__(self, position):
+    #   self.position = position
+    def pos(self):
+        return self.position
+        # erstwunsch1 = relationship('erstwunsch', primaryjoin='Workshop.name == Schueler.erstwunsch')
+        # zweitwunsch2 = relationship('zweitwunsch', secondary='Workshop', backref='Schueler')
+        # drittwunsch3 = relationship('drittwunsch', secondary='Workshop', backref='Schueler')
+        # projekt4 = relationship('projekt', secondary='Workshop', backref='Schueler')
+        # Workshop1 = relationship("Workshop", primaryjoin='Schuler.zweitwunsch == Workshop.name')
+        # Workshop2 = relationship("Workshop", primaryjoin='Schuler.drittwunsch == Workshop.name')
+        # Workshop3 = relationship("Workshop", primaryjoin='Schuler.projekt == Workshop.name')

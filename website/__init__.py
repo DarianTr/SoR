@@ -24,9 +24,9 @@ def create_app():
     from .choose import choose 
     from structure import Person
     
-    
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(choose, url_prefix='/')
+
     
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
