@@ -12,7 +12,8 @@ from flask_wtf import FlaskForm
 from wtforms import FileField
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileAllowed
-
+import util
+from config import path
 
 ALLOWED_EXTENSIONS = {'txt', 'csv'}
 
@@ -47,24 +48,24 @@ def lehrer():
 
 
 
-@choose.route('/select-file', methods=['POST', 'GET'])
-def select_file():
-    # Create a Tkinter root window
-    root = Tk()
-    root.withdraw()
+# @choose.route('/select-file', methods=['POST', 'GET'])
+# def select_file():
+#     # Create a Tkinter root window
+#     root = Tk()
+#     root.withdraw()
 
-    # Ask the user to select a file
-    filepath = askopenfilename()
+#     # Ask the user to select a file
+#     filepath = askopenfilename()
 
-    # Sendet das file -> client kann speichern
-    return send_file(filepath, as_attachment=True)
+#     # Sendet das file -> client kann speichern
+#     return send_file(filepath, as_attachment=True)
 
-@choose.route('/download_file')
-def download_file():
-    try:
-        return send_file('test.txt',  as_attachment=True, download_name='file.txt')
-    except Exception as e:
-        return "Error: " + str(e)
+# @choose.route('/download_file')
+# def download_file():
+#     try:
+#         return send_file('test.txt',  as_attachment=True, download_name='file.txt')
+#     except Exception as e:
+#         return "Error: " + str(e)
     
     
 # @choose.route('/upload-file', methods=['POST', 'GET'])
@@ -101,19 +102,22 @@ def download_file():
 
 class FileForm(FlaskForm):
     file = FileField('File', validators=[DataRequired(), FileAllowed(ALLOWED_EXTENSIONS, 'Bitte nur .txt oder .csv files')])
-
-@choose.route('/file_upload', methods=['GET', 'POST'])
-def upload_file():
+    
+@lehrer_role_required
+@choose.route('/schuelerliste', methods=['GET', 'POST'])
+def setup_schuelerliste():
     form = FileForm()
     if form.validate_on_submit():
         f = form.file.data
-        f.save('asdfasduf01nv010b923n.txt')
-        data = pd.read_csv("asdfasduf01nv010b923n.txt", sep=' ')
-        flash('Success', category='success')
-        print(data)
-        os.remove('asdfasduf01nv010b923n.txt')
-        
+        f.save('asdfasduf01nv010b923n.csv')
+        util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7)
+        try:
+            return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
+        except Exception as e:
+            return "Error: " + str(e)
     else:
         flash('Bitte nur .txt oder .csv files', category='error')
+    if os.path.exists(os.path.join(path, 'asdfasduf01nv010b923n.csv')):
+        os.remove(os.path.join(path, 'asdfasduf01nv010b923n.csv'))
     return render_template('upload.html', form=form)
     

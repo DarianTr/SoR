@@ -33,6 +33,7 @@ Datei `config.py.dist` nach `config.py` kopieren und
 - `PASSWORD` ersetzen
 - `DATABASE` ersetzen
 - `SECRET` ersetzen
+- `PATH\\FOR\\FILES` ersetzten
 
 ## **Testdaten**
 
