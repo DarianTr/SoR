@@ -6,7 +6,7 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from flask import abort
 from werkzeug.utils import secure_filename
-from . import app
+from . import app, database, engine
 import pandas as pd
 from flask_wtf import FlaskForm
 from wtforms import FileField
@@ -14,6 +14,9 @@ from wtforms.validators import DataRequired
 from flask_wtf.file import FileAllowed
 import util
 from config import path
+from structure import Person
+from werkzeug.security import generate_password_hash
+
 
 ALLOWED_EXTENSIONS = {'txt', 'csv'}
 
@@ -110,8 +113,9 @@ def setup_schuelerliste():
     if form.validate_on_submit():
         f = form.file.data
         f.save('asdfasduf01nv010b923n.csv')
-        util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7)
+        datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7)
         try:
+            create_schueler(datei)
             return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
         except Exception as e:
             return "Error: " + str(e)
@@ -121,3 +125,11 @@ def setup_schuelerliste():
         os.remove(os.path.join(path, 'asdfasduf01nv010b923n.csv'))
     return render_template('upload.html', form=form)
     
+    
+def create_schueler(csv_file):
+    data = pd.read_csv(csv_file, sep=',', encoding='utf-8')
+    for row in data.itertuples():
+        print(row[1], row[2], row[3], row[4])
+        new_user = Person(vorname=row[1], nachname=row[2], position='Schueler', username=row[3],  password=generate_password_hash(row[4], method='sha256'))
+        database.session.add(new_user)
+        database.session.commit()
