@@ -14,8 +14,11 @@ from wtforms.validators import DataRequired
 from flask_wtf.file import FileAllowed
 import util
 from config import path
-from structure import Person
+import structure
 from werkzeug.security import generate_password_hash
+import sqlalchemy
+import sqlalchemy.orm
+from website import database
 
 
 ALLOWED_EXTENSIONS = {'txt', 'csv'}
@@ -115,6 +118,9 @@ def setup_schuelerliste():
         f.save('asdfasduf01nv010b923n.csv')
         datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7)
         try:
+            d = database.session.query(structure.Person).where(structure.Person.position == 'Schueler').all()
+            for person in d:
+                database.session.delete(person)
             create_schueler(datei)
             return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
         except Exception as e:
@@ -130,6 +136,6 @@ def create_schueler(csv_file):
     data = pd.read_csv(csv_file, sep=',', encoding='utf-8')
     for row in data.itertuples():
         print(row[1], row[2], row[3], row[4])
-        new_user = Person(vorname=row[1], nachname=row[2], position='Schueler', username=row[3],  password=generate_password_hash(row[4], method='sha256'))
+        new_user = structure.Person(vorname=row[1], nachname=row[2], position='Schueler', username=row[3],  password=generate_password_hash(row[4], method='sha256'))
         database.session.add(new_user)
         database.session.commit()
