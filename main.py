@@ -1,5 +1,5 @@
-from website import database, engine
-import structure
+from SoR.website import database, engine
+import SoR.structure
 import sqlalchemy
 import sqlalchemy.orm
 from sqlalchemy.orm import query
@@ -10,7 +10,7 @@ from sqlalchemy.orm import query
 #     list_of_tuples = []
 #     # for row in result:
 #     #     list_of_tuples.append((row[0], (row[1], row[2], row[3])))
-from website import create_app
+from SoR.website import create_app
 app = create_app()
 
 

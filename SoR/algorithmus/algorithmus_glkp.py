@@ -1,8 +1,19 @@
 
+import path
+import sys
+ 
+# directory reach
+directory = path.Path(__file__).abspath()
+ 
+# setting path
+sys.path.append(directory.parent.parent)
+
+
 from algorithmus_input import Schueler2, Projekt1, COST_1, COST_2, COST_3, pos_of_proj, list_of_projects, list_of_students
 from pymprog import * 
 from itertools import product 
 from random import randint
+
 
 
 ###  Schuler2 und Projekt1 sind Testdaten. 

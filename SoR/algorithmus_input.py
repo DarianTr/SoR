@@ -103,7 +103,7 @@ Projekt1 = [
 COST_1 = 100
 COST_2 = 75
 COST_3 = 50
-COST_N = 0
+COST_N = 0            # COST_N: Kosten wenn man in keines seiner gewünschten Projekte kommt
 
 ####################### HIGHER IS BETTER #######################
 
