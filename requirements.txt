@@ -9,3 +9,4 @@ Mysqlclient
 pymysql
 flask_wtf
 openpyxl
+pymprog
