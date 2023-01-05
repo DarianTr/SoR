@@ -10,3 +10,4 @@ pymysql
 flask_wtf
 openpyxl
 pymprog
+path
