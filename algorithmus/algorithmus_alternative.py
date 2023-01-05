@@ -1,5 +1,5 @@
 from random import choice
-from algorithmus_darian import COST_1, COST_2, COST_3, COST_N, Schueler2, Projekt1
+from algorithmus_input import COST_1, COST_2, COST_3, COST_N, Schueler2, Projekt1
 
 
 #### NICHT FETIG ####
