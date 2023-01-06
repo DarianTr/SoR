@@ -116,7 +116,7 @@ def setup_schuelerliste():
     if form.validate_on_submit():
         f = form.file.data
         f.save('asdfasduf01nv010b923n.csv')
-        datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7)
+        datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7, 'output.csv')
         try:
             d = database.session.query(structure.Person).where(structure.Person.position == 'Schueler').all()
             for person in d:

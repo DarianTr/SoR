@@ -16,19 +16,13 @@ engine.connect()
 
 with sqlalchemy.orm.Session(engine) as session:
     s = session.query(structure.Person).where(structure.Person.position == 'Schueler')
-    schueler = s.all()
-    
-list_of_students = []
-for SuS in schueler:
-    list_of_students.append((SuS.vorname, SuS.nachname, SuS.klasse, SuS.erstwunsch, SuS.zweitwunsch, SuS.drittwunsch))
+    list_of_students = s.all()
 
-with sqlalchemy.orm.Session(engine) as session:
+
     s = session.query(structure.Workshop)
-    projects = s.all()
+    list_of_projects = s.all()
 
-list_of_projects = []
-for project in projects:
-    list_of_projects.append((project.name, project.maxTeilnehmer, project.klasse))
+
 
 ################################################################
 
@@ -109,8 +103,5 @@ COST_N = 0            # COST_N: Kosten wenn man in keines seiner gewünschten Pr
 
 ################################################################
 
-
-def pos_of_proj(project, projectlist):
-    return next((i for i, item in enumerate(projectlist) if item.name == project), -1) ### Returns position of the project in the list 
 
 
