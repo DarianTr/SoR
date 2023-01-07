@@ -9,7 +9,7 @@ directory = path.Path(__file__).abspath()
 sys.path.append(directory.parent.parent)
 
 from random import choice
-from algorithmus_input import COST_1, COST_2, COST_3, COST_N, Schueler2, Projekt1
+from test.algorithmus_input import COST_1, COST_2, COST_3, COST_N, Schueler2, Projekt1
 
 
 #### NICHT FETIG ####

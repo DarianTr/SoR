@@ -15,12 +15,19 @@ from website import database
 
 auth = Blueprint('auth', __name__)
 
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user() 
+    return redirect(url_for('auth.login'))
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('usename')
+        username = request.form.get('username')
         password = request.form.get('password')
-        user = Person.query.first()
+        user = Person.query.where(Person.username == username).first()
         print(check_password_hash(user.password, password), user.password)
         if user:
             if check_password_hash(user.password, password):
@@ -29,7 +36,7 @@ def login():
                 if user.pos() == 'Schueler':
                     return redirect(url_for('schueler.list'))
                 else:
-                    return redirect(url_for('lehrer.lehrer'))
+                    return redirect(url_for('lehrer.lehrerview'))
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
@@ -60,8 +67,8 @@ def sign_up():
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
             if current_user.pos() == 'Schueler':
-                return redirect(url_for('schueler.show_projects'))
+                return redirect(url_for('schueler.list'))
             else:
-                return redirect(url_for('lehrer.view'))
+                return redirect(url_for('lehrer.lehrerview'))
 
     return render_template("signup.html", user=current_user)

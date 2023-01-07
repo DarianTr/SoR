@@ -22,6 +22,8 @@ def username_password_csv_erweiterung(file, filetype, pw_laenge, output_name):
         input.to_excel(output_name_with_extension, index=False)
     return output_name_with_extension
 
+
+
 # def create_schueler(csv_file):
 #     data = pd.read_csv(csv_file, sep=',', encoding='utf-8')
 #     for row in data.itertuples():

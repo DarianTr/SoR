@@ -5,13 +5,16 @@
             <title>Projektliste</title>
         </head>
         <body>
-            <h1>Liste von Projektenk</h1>
+            <h1>Liste von Projekten</h1>
             <div>
                 {% for p in projektliste%}
                     <a href="/list/{{p.id}}">{{p.name}}</a>: {{p.minKlasse}}-{{p.maxKlasse}}
                     <br>
                 {% endfor %}
             </div>
+            <form method="post">
+                <input type="submit" class="button" value="Zur Wahl">
+            </form>
         </body>
 
 {% endblock %}

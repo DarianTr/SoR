@@ -1,16 +1,29 @@
 
 from sqlalchemy import Column, Date, DateTime, Float, ForeignKey, String, Text, Table, Integer
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.dialects.mysql import INTEGER
+from sqlalchemy.dialects.mysql import INTEGER, BOOLEAN
 from website import database
 from sqlalchemy import create_engine
 from config import database_url
 from flask_login import UserMixin
 from alembic import command
+import datetime
 
 engine = create_engine(database_url, echo=True)
 engine.connect()
 
+
+class Job(database.Model):
+    __tablename__ = 'Job'
+    id = Column(Integer, primary_key=True)
+    status = Column(Text)
+    start = Column(DateTime, default=datetime.datetime.now)
+    finish = Column(DateTime)
+    message = Column(Text)
+    started_by = Column(ForeignKey('Person.id'), index = True)
+
+
+    starter = relationship('Person', foreign_keys =[started_by])
 class Workshop(database.Model):
     __tablename__ = 'Workshop'
     id = Column(Integer, primary_key=True)
@@ -36,18 +49,18 @@ class Person(database.Model, UserMixin):
     # zweitwunsch = Column(INTEGER(10),ForeignKey('Workshop.name'), index = True)
     # drittwunsch = Column(INTEGER(10),ForeignKey('Workshop.name'), index = True)
     # projekt = Column(INTEGER(10),ForeignKey('Workshop.name'))
-    erstwunsch = Column(ForeignKey('Workshop.name'), index = True)
-    zweitwunsch = Column(ForeignKey('Workshop.name'), index = True)
-    drittwunsch = Column(ForeignKey('Workshop.name'), index = True)
-    projekt = Column(ForeignKey('Workshop.name'), index = True)
+    _wunsch1_id = Column(ForeignKey('Workshop.id'), index = True, nullable=True)
+    _wunsch2_id = Column(ForeignKey('Workshop.id'), index = True, nullable=True)
+    _wunsch3_id = Column(ForeignKey('Workshop.id'), index = True, nullable=True)
+    _projekt_id = Column(ForeignKey('Workshop.id'), index = True, nullable=True)
     position = Column(Text)
-    username = Column(Text)
+    username = Column(Text, unique = True)
     password = Column(Text)
     
-    wunsch1 = relationship('Workshop', foreign_keys =[erstwunsch])
-    wunsch2 = relationship('Workshop', foreign_keys =[zweitwunsch])
-    wunsch3 = relationship('Workshop', foreign_keys =[drittwunsch])
-    result = relationship('Workshop', foreign_keys =[projekt])
+    wunsch1 = relationship('Workshop', foreign_keys =[_wunsch1_id])
+    wunsch2 = relationship('Workshop', foreign_keys =[_wunsch2_id])
+    wunsch3 = relationship('Workshop', foreign_keys =[_wunsch3_id])
+    projekt = relationship('Workshop', foreign_keys =[_projekt_id])
         
         
     #def __init__(self, position):

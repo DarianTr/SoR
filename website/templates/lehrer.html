@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>List and Button</title>
+{% extends 'base.html' %}
+{% block title %} Lehrer {% endblock%}
+{% block style %}
     <style>
         ul {
             list-style-type: none;
@@ -27,16 +26,67 @@
         button:hover {
             opacity: 0.8;
         }
-    </style>
-</head>
-<body>
-    <h1>My List</h1>
-    <ul>
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
+        /* CSS TABLE STYLES */
 
-    </ul>
-    <button type="button">Click Me!</button>
-</body>
-</html>
+.css-table {
+display: table;
+}
+
+.css-table-header {
+display: table-header-group;
+font-weight: bold;
+background-color: rgb(191, 191, 191);
+}
+
+.css-table-body {
+display: table-row-group;
+}
+
+.css-table-row {
+display: table-row;
+}
+
+.css-table-header div,
+.css-table-row div {
+display: table-cell;
+padding: 0 6px;
+}
+
+.css-table-header div {
+text-align: center;
+border: 1px solid rgb(255, 255, 255);
+}
+    </style>
+{%endblock%}
+{% block content%}
+    <h1>Vergangene Jobs{{jobs.finish}}</h1>
+        <div class="css-table">
+            <div class="css-table-header">
+                <div>Gestarted</div>
+                <div>Von</div>
+                <div>Beendet</div>
+                <div>Status</div>
+                <div>Nachricht</div>
+            </div>
+            {%for j in jobs%}
+            <div class="css-table-body">
+                <div class="css-table-row">
+                    <div>{{j.start}}</div>
+                    <div>{{j.starter.username}}</div>
+                    <div>{{j.finish}}</div>
+                    <div>{{j.status}}</div>
+                    <div>{{j.message}}</div>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+{% if jobs_running %}
+    <h1> Der Algorithmus läuft noch. Dies kann eingige Minuten bis Stunden dauern. Bitte haben sie Geduld.
+{% else %}
+    <h1>{{count_students_voted}} von {{count_students}} Schülern haben schon gewählt</h1>
+    <p> Wollen sie die Zuordnung starten? </p>
+    <form method='POST'>
+        <button type="submit" id="start" name="start">Start</button>
+    </form>
+{%endif%}
+{%endblock%}

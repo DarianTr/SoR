@@ -3,7 +3,7 @@ from itertools import product
 
 
 def pos_of_proj(project, projectlist):
-    return next((i for i, item in enumerate(projectlist) if item.name == project), -1) ### Returns position of the project in the list 
+    return next((i for i, item in enumerate(projectlist) if item == project), -1) ### Returns position of the project in the list 
 
 
 
@@ -11,7 +11,7 @@ def pos_of_proj(project, projectlist):
 ###  Schuler2 und Projekt1 sind Testdaten. 
 ### Um die echten Daten zu nehmen muss man Schuler2 mit list_of_students und Projekt1 mit list_of_projects austauschen
 
-def assign_students(Schueler2, Projekt1, COST_1, COST_2, COST_3): 
+def assign_students(job_id, Schueler2, Projekt1, COST_1, COST_2, COST_3, callback): 
     #problem data
     m = len(Schueler2) # students
     M = range(m) #set of students
@@ -43,7 +43,7 @@ def assign_students(Schueler2, Projekt1, COST_1, COST_2, COST_3):
     # maximal Klassenstufe pro projekt
     k_max = [p.maxKlasse for p in Projekt1]
     # klassenstufe
-    k_schueler = [s.klasse for s in Schueler2]
+    k_schueler = [s.klassenstufe for s in Schueler2]
 
 
     begin("assign")
@@ -78,13 +78,17 @@ def assign_students(Schueler2, Projekt1, COST_1, COST_2, COST_3):
 
 
     def report():
-        print("Total Cost = %g"%vobj())
-        assign = [(i,j) for i in M for j in N 
-                    if x[i,j].primal == 1]
-        for i,j in assign:
-            print("Student %s gets Course %s"%(Schueler2[i].name, Projekt1[j].name))
+        print("Total Cost = %g"%vobj()) #### generate dict
+        # assign = [(i,j) for i in M for j in N 
+        #             if x[i,j].primal == 1]
+        assign = {Schueler2[i].id:Projekt1[j].id for i in M for j in N 
+                    if x[i,j].primal == 1}
+        # for i,j in assign:
+        #     print("Student %s gets Course %s"%(Schueler2[i].name, Projekt1[j].name))
         return assign
 
+
     solve()
-    report()
+    result = report()
     end()
+    callback(job_id, result)

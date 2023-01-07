@@ -5,9 +5,31 @@
     <form method='POST'>
       <label for="wunsch1">Erstwunsch:</label><br>
       <select name="wunsch1" id="wunsch1" class="form-control">
+        <option value="">--Bitte ausw&auml;hlen--</option>
         {% for p in projektliste%}
-        <option>{{p.name}}</option>
+        <option value="{{p.id}}" {%if user.wunsch1.id == p.id%}selected=true{%endif%}>{{p.name}}</option>
+        <br>
         {% endfor %}
+        <br>
+      </select>
+      <label for="wunsch2">Zweitwunsch:</label><br>
+      <select name="wunsch2" id="wunsch2" class="form-control">
+        <option value="">--Bitte ausw&auml;hlen--</option>
+        {% for p in projektliste%}
+        <option value="{{p.id}}" {%if user.wunsch2.id == p.id%}selected=true{%endif%}>{{p.name}}</option>
+        <br>
+        {% endfor %}
+        <br>
+      </select>
+      <label for="wunsch3">Drittwunsch:</label><br>
+      <select name="wunsch3" id="wunsch3" class="form-control">
+        <option value="">--Bitte ausw&auml;hlen--</option>
+        {% for p in projektliste%}
+        <option value="{{p.id}}" {%if user.wunsch3.id == p.id%}selected=true{%endif%}>{{p.name}}</option>
+        <br>
+        {% endfor %}
+      </select>
+      <br>
       <input type="submit" value="Wählen">
     </form> 
   </body>

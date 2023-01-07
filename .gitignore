@@ -2,3 +2,4 @@
 config.py
 *.xlsx
 *.csv
+**/.vscode
