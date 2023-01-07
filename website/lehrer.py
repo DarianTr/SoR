@@ -16,7 +16,6 @@ import util
 from config import path
 import structure
 from werkzeug.security import generate_password_hash
-import sqlalchemy
 import sqlalchemy.orm
 from website import database
 
@@ -27,7 +26,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
            
-choose = Blueprint('choose', __name__)
+lehrer = Blueprint('lehrer', __name__)
 
 def lehrer_role_required(func):
     @wraps(func)
@@ -40,20 +39,49 @@ def lehrer_role_required(func):
             
     return decorated_view
 
-@choose.route('/choose', methods=['GET', 'POST'])
-#@login_required(current_user.position == 'Schueler')
-def select():
-    return render_template('select_project.html', user=current_user) 
-
-@choose.route('/lehrer', methods=['GET', 'POST'])
+@lehrer.route('/lehrer', methods=['GET', 'POST'])
 @lehrer_role_required
 @login_required
-def lehrer(): 
+def lehrer_view(): 
     
     return render_template('lehrer.html', user=current_user)
 
 
+   
+def create_schueler(csv_file):
+    data = pd.read_csv(csv_file, sep=',', encoding='utf-8')
+    for row in data.itertuples():
+        print(row[1], row[2], row[3], row[4])
+        new_user = structure.Person(vorname=row[1], nachname=row[2], position='Schueler', username=row[3],  password=generate_password_hash(row[4], method='sha256'))
+        database.session.add(new_user)
+        database.session.commit()
 
+class FileForm(FlaskForm):
+    file = FileField('File', validators=[DataRequired(), FileAllowed(ALLOWED_EXTENSIONS, 'Bitte nur .txt oder .csv files')])
+    
+@lehrer_role_required
+@lehrer.route('/schuelerliste', methods=['GET', 'POST'])
+def setup_schuelerliste():
+    form = FileForm()
+    if form.validate_on_submit():
+        f = form.file.data
+        f.save('asdfasduf01nv010b923n.csv')
+        datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7, 'output.csv')
+        try:
+            d = database.session.query(structure.Person).where(structure.Person.position == 'Schueler').all()
+            for person in d:
+                database.session.delete(person)
+            create_schueler(datei)
+            return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
+        except Exception as e:
+            return "Error: " + str(e)
+    else:
+        flash('Bitte nur .txt oder .csv files', category='error')
+    if os.path.exists(os.path.join(path, 'asdfasduf01nv010b923n.csv')):
+        os.remove(os.path.join(path, 'asdfasduf01nv010b923n.csv'))
+    return render_template('upload.html', form=form)
+    
+ 
 # @choose.route('/select-file', methods=['POST', 'GET'])
 # def select_file():
 #     # Create a Tkinter root window
@@ -103,39 +131,3 @@ def lehrer():
 #     '''
 
 # choose.add_url_rule("/uploads/<name>", endpoint="download_file", build_only=True)
-
-
-
-class FileForm(FlaskForm):
-    file = FileField('File', validators=[DataRequired(), FileAllowed(ALLOWED_EXTENSIONS, 'Bitte nur .txt oder .csv files')])
-    
-@lehrer_role_required
-@choose.route('/schuelerliste', methods=['GET', 'POST'])
-def setup_schuelerliste():
-    form = FileForm()
-    if form.validate_on_submit():
-        f = form.file.data
-        f.save('asdfasduf01nv010b923n.csv')
-        datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7, 'output.csv')
-        try:
-            d = database.session.query(structure.Person).where(structure.Person.position == 'Schueler').all()
-            for person in d:
-                database.session.delete(person)
-            create_schueler(datei)
-            return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
-        except Exception as e:
-            return "Error: " + str(e)
-    else:
-        flash('Bitte nur .txt oder .csv files', category='error')
-    if os.path.exists(os.path.join(path, 'asdfasduf01nv010b923n.csv')):
-        os.remove(os.path.join(path, 'asdfasduf01nv010b923n.csv'))
-    return render_template('upload.html', form=form)
-    
-    
-def create_schueler(csv_file):
-    data = pd.read_csv(csv_file, sep=',', encoding='utf-8')
-    for row in data.itertuples():
-        print(row[1], row[2], row[3], row[4])
-        new_user = structure.Person(vorname=row[1], nachname=row[2], position='Schueler', username=row[3],  password=generate_password_hash(row[4], method='sha256'))
-        database.session.add(new_user)
-        database.session.commit()

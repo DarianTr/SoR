@@ -1,3 +1,12 @@
+import path
+import sys
+ 
+# directory reach
+directory = path.Path(__file__).abspath()
+ 
+# setting path
+sys.path.append(directory.parent.parent)
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,22 +17,23 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    print(current_user.pos)
     if request.method == 'POST':
         username = request.form.get('usename')
         password = request.form.get('password')
-
-        user = Person.query.filter_by().first()
+        user = Person.query.first()
+        print(check_password_hash(user.password, password), user.password)
         if user:
             if check_password_hash(user.password, password):
                 flash('Logged in sucessfully!', category='success')
                 login_user(user, remember=True)
-                return redirect(url_for('choose.select'))
+                if user.pos() == 'Schueler':
+                    return redirect(url_for('schueler.list'))
+                else:
+                    return redirect(url_for('lehrer.lehrer'))
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
-            flash('Email does not exist.', category='error')
-    
+            flash('Usename does not exist.', category='error')
     return render_template('login.html', user=current_user) 
 
 
@@ -37,7 +47,6 @@ def sign_up():
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
         position = request.form.get('position')
-        print(vorname, nachname, klasse, username, password1,position)
         user = Person.query.filter_by(username=username).first()
         if user:
             flash('Username already exists.', category='error')
@@ -45,11 +54,14 @@ def sign_up():
             flash('Passwords don\'t match.', category='error')
         else:
             print("test")
-            new_user = Person(vorname=vorname, nachname=nachname, klasse = klasse, position=position, username=username,  password=generate_password_hash(password1, method='sha256'))
+            new_user = Person(vorname=vorname, nachname=nachname, klassenstufe = klasse, position=position, username=username,  password=generate_password_hash(password1, method='sha256'))
             database.session.add(new_user)
             database.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('choose.select'))
+            if current_user.pos() == 'Schueler':
+                return redirect(url_for('schueler.show_projects'))
+            else:
+                return redirect(url_for('lehrer.view'))
 
     return render_template("signup.html", user=current_user)

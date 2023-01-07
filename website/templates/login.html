@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
+{% extends 'base.html' %}
+{% block title %}Login{% endblock%}
+{% block style %}
+
     <style>
         body {
             margin: 0;
@@ -58,19 +58,22 @@
             margin: 12px 0;
         }
     </style>
-</head>
+{% endblock %}
+{% block content %}
 <body>
-    <div class="login-box">
-        <h1>Login</h1>
-        <div class="textbox">
-            <i class="fas fa-user"></i>
-            <input type="text" placeholder="Username" name="username">
+    <form method='POST'>
+        <div class="login-box">
+            <h1>Login</h1>
+            <div class="textbox">
+                
+                <input type="text" placeholder="Username" name="username">
+            </div>
+            <div class="textbox">
+                
+                <input type="password" placeholder="Password" name="password">
+            </div>
+            <input class="btn" type="submit" value="Sign in">
         </div>
-        <div class="textbox">
-            <i class="fas fa-lock"></i>
-            <input type="password" placeholder="Password" name="password">
-        </div>
-        <input class="btn" type="button" value="Sign in">
-    </div>
+    </form>
 </body>
-</html> 
+{% endblock %}

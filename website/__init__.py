@@ -24,12 +24,13 @@ def create_app():
     
     
     from .auth import auth 
-    from .choose import choose 
+    from .lehrer import lehrer 
+    from .schueler import schueler
     from structure import Person
     
     app.register_blueprint(auth, url_prefix='/')
-    app.register_blueprint(choose, url_prefix='/')
-
+    app.register_blueprint(lehrer, url_prefix='/')
+    app.register_blueprint(schueler, url_prefix='/')
     
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

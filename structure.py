@@ -13,16 +13,14 @@ engine.connect()
 
 class Workshop(database.Model):
     __tablename__ = 'Workshop'
-    
-    name = Column(String(255), primary_key=True)
-    maxTeilnehmer = Column(INTEGER(10))    
-    teilnehmer = Column(INTEGER(10))
-    klasse = Column(Text)  #Tuple sind kompliziert in die Tabelle einzufuegen
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    minTeilnehmer = Column(INTEGER(10))
+    maxTeilnehmer = Column(INTEGER(10))
+    minKlasse = Column(INTEGER(10))
+    maxKlasse = Column(INTEGER(10))     
+    anzahlTeilnehmer = Column(INTEGER(10))
     kurzbeschreibung = Column(Text)
-    # schueler = relationship("Schueler", backref="Workshop")
-    # schueler1 = relationship("Schueler", backref="Workshop")
-    # schueler2 = relationship("Schueler", backref="Workshop")
-    # schueler3 = relationship("Schueler", backref="Workshop")
     
     
 
@@ -33,7 +31,7 @@ class Person(database.Model, UserMixin):
     id = Column(INTEGER(10), primary_key=True)
     vorname = Column(Text)
     nachname = Column(Text)
-    klasse = Column(INTEGER(10))
+    klassenstufe = Column(INTEGER(10))
     # erstwunsch = Column(INTEGER(10), ForeignKey('Workshop.name'), index = True)
     # zweitwunsch = Column(INTEGER(10),ForeignKey('Workshop.name'), index = True)
     # drittwunsch = Column(INTEGER(10),ForeignKey('Workshop.name'), index = True)

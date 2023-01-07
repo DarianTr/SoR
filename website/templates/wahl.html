@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %} Wahl {% endblock%}
+{% block content %}
+  <body>
+    <form method='POST'>
+      <label for="wunsch1">Erstwunsch:</label><br>
+      <select name="wunsch1" id="wunsch1" class="form-control">
+        {% for p in projektliste%}
+        <option>{{p.name}}</option>
+        {% endfor %}
+      <input type="submit" value="Wählen">
+    </form> 
+  </body>
+{% endblock %}
