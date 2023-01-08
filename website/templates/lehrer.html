@@ -62,7 +62,7 @@ border: 1px solid rgb(255, 255, 255);
     <h1>Vergangene Jobs{{jobs.finish}}</h1>
         <div class="css-table">
             <div class="css-table-header">
-                <div>Gestarted</div>
+                <div>Gestartet</div>
                 <div>Von</div>
                 <div>Beendet</div>
                 <div>Status</div>
@@ -89,4 +89,14 @@ border: 1px solid rgb(255, 255, 255);
         <button type="submit" id="start" name="start">Start</button>
     </form>
 {%endif%}
+{%if last_successful_job %}
+<h1>Ergebnisdownload</h1>
+<p>Durchlauf von {{last_successful_job.start}}
+<form method='GET' action="schueler_projekt_download" >
+    <button type="submit" id="start" name="start">Download</button>
+</form>
+{%endif%}
+<form method='GET' action="import" >
+    <button type="submit" id="import" name="import">Importiere Schueler- und Projektlisten</button>
+</form>
 {%endblock%}

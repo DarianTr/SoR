@@ -5,12 +5,16 @@
             <title>File Upload</title>
         </head>
         <body>
-            <h1>File Upload</h1>
             <form method="POST" enctype="multipart/form-data">
                 {{ form.csrf_token }}
-                {{ form.file.label }}
-                {{ form.file }}
-                <input type="submit" value="Upload File">
+                {{ form.schueler_file.label }}
+                {{ form.schueler_file }}
+                <input type="submit" value="Upload Schueler">
+                <br>
+                {{ form.csrf_token }}
+                {{ form.projekt_file.label }}
+                {{ form.projekt_file }}
+                <input type="submit" value="Upload Projekte">
             </form>
         </body>
 

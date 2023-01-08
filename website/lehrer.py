@@ -64,7 +64,7 @@ def algorithm_in_new_thread(list_of_students, list_of_projects):
         new_job.status = 'running'
         sess.merge(new_job)
         sess.commit()
-           
+    return new_job.id          
            
 def write_to_csv(filename):
     with sqlalchemy.orm.Session(engine) as sess:
@@ -88,7 +88,17 @@ def lehrer_role_required(func):
             
     return decorated_view
 
-
+@lehrer.route('/schueler_projekt_download', methods=['GET'])
+@login_required
+@lehrer_role_required
+def schueler_projekt_download(): 
+    with sqlalchemy.orm.Session(engine) as sess:
+        last_successful_job = sess.query(structure.Job).options(joinedload('*')).filter(structure.Job.status == 'success').order_by(structure.Job.start.desc()).first()
+        if not last_successful_job:
+            return 'Der Algorithmus läuft noch. Bitte haben sie Gedult.'
+        
+        write_to_csv('SchuelerlisteMitProjekten.csv')
+        return send_file(os.path.join(path, f'SchuelerlisteMitProjekten.csv'),  as_attachment=True, download_name='SchuelerlisteMitProjekten.csv')
 
 @lehrer.route('/lehrerview', methods=['GET', 'POST'])
 @login_required
@@ -97,7 +107,7 @@ def lehrerview():
     with sqlalchemy.orm.Session(engine) as sess:
         count_students_voted = sess.query(structure.Person).filter(structure.Person.wunsch1 != None).where(structure.Person.position == 'Schueler').count()
         count_students = sess.query(structure.Person).where(structure.Person.position == 'Schueler').count()
-        jobs = sess.query(structure.Job).options(joinedload('*')).all()
+        jobs = sess.query(structure.Job).order_by(structure.Job.start.desc()).limit(10).options(joinedload('*')).all()
         jobs_running = [j for j in jobs if j.status == 'Running' or j.status == 'Waiting'] != []
         if request.method == 'POST':
             #set algorithm bool to True
@@ -109,19 +119,11 @@ def lehrerview():
                 s = sess.query(structure.Workshop)
                 list_of_projects = s.all()
                 
-                algorithm_in_new_thread(list_of_students, list_of_projects)
+                id = algorithm_in_new_thread(list_of_students, list_of_projects)
                 jobs = sess.query(structure.Job).all()
-                while jobs[-1].status != 'success':
-                    time.sleep(1)
-                    jobs = sess.query(structure.Job).all()
-                print('test')
-                write_to_csv('SchuelerlisteMitProjekten.csv')
-                try:
-                    return send_file(os.path.join(path, f'SchuelerlisteMitProjekten.csv'),  as_attachment=True, download_name='SchuelerlisteMitProjekten.csv')
-                except Exception as e:
-                    return str(e)
-    jobs.reverse()
-    return render_template('lehrer.html', user=current_user, count_students_voted=count_students_voted, count_students=count_students, jobs=jobs[:10], jobs_running=jobs_running)
+        last_successful_job = sess.query(structure.Job).options(joinedload('*')).filter(structure.Job.status == 'success').order_by(structure.Job.start.desc()).first()
+
+    return render_template('lehrer.html', user=current_user, count_students_voted=count_students_voted, count_students=count_students, jobs=jobs, jobs_running=jobs_running, last_successful_job=last_successful_job)
 
 
    
@@ -134,30 +136,36 @@ def create_schueler(csv_file):
         database.session.commit()
 
 class FileForm(FlaskForm):
-    file = FileField('File', validators=[DataRequired(), FileAllowed(ALLOWED_EXTENSIONS, 'Bitte nur .txt oder .csv files')])
-   
+    schueler_file = FileField('File', validators=[FileAllowed(ALLOWED_EXTENSIONS, 'Bitte nur .txt oder .csv files')])
+    projekt_file = FileField('File', validators=[FileAllowed(ALLOWED_EXTENSIONS, 'Bitte nur .txt oder .csv files')])
 
 
-@lehrer.route('/schuelerliste', methods=['GET', 'POST'])
+@lehrer.route('/import', methods=['GET', 'POST'])
 @lehrer_role_required
 def schuelerliste():
     form = FileForm()
-    if form.validate_on_submit():
-        f = form.file.data
-        f.save('asdfasduf01nv010b923n.csv')
-        datei = util.username_password_csv_erweiterung('asdfasduf01nv010b923n.csv', 'csv', 7, 'schuelerlist_mit_passwort_und_username.csv')
-        try:
-            d = database.session.query(structure.Person).where(structure.Person.position == 'Schueler').all()
-            for person in d:
-                database.session.delete(person)
-            create_schueler(datei)
-            return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
-        except Exception as e:
-            return "Error: " + str(e)
-    else:
-        flash('Bitte nur .txt oder .csv files', category='error')
-    if os.path.exists(os.path.join(path, 'asdfasduf01nv010b923n.csv')):
-        os.remove(os.path.join(path, 'asdfasduf01nv010b923n.csv'))
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            f = form.schueler_file.data
+            if f:
+                content = f.read().decode('utf-8')
+                datei = util.username_password_csv_erweiterung(content, 'csv', 7, 'schuelerlist_mit_passwort_und_username.csv')
+                try:
+                    d = database.session.query(structure.Person).where(structure.Person.position == 'Schueler').all()
+                    for person in d:
+                        database.session.delete(person)
+                    create_schueler(datei)
+                    return send_file(os.path.join(path, 'output.csv'),  as_attachment=True, download_name='SchuelerlisteMitZugangsdaten.csv')
+                except Exception as e:
+                    return "Error: " + str(e)
+            p = form.projekt_file.data
+            if p:
+                content = p.read().decode('utf-8')
+                util.projekt_csv(content, 'csv')
+            
+            
+        else:
+            flash('Bitte nur .txt oder .csv files', category='error')
     return render_template('upload.html', form=form, user=current_user)
     
  
