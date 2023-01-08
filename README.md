@@ -44,3 +44,17 @@ td = testData(numberOfStudents)
 td.nameList # Liste mit Namen und Wünschen
 td.workshopList # Liste der Workshops
 ```
+
+## **React**
+Um die React App zu testen ist [Node](https://nodejs.org/en/) erforderlich. Wenn das fertig installiert ist bitte noch die benötigten Module importieren (es sollte ein Ordner namens node_modules entstehen).
+```shell
+cd react-app
+npm install
+```
+
+zum Starten der App im Standardbrowser:
+
+```shell
+cd react-app
+npm start
+```
