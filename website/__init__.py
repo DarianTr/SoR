@@ -9,7 +9,7 @@ from flask_login import LoginManager
 import os
 
 pymysql.install_as_MySQLdb()
-engine = create_engine(config.database_url, echo=True)
+engine = create_engine(config.database_url, echo=True, pool_pre_pring=True)
 engine.connect()
 
 
