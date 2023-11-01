@@ -28,7 +28,6 @@ def assign_students(job_id, Schueler2, Projekt1, COST_1, COST_2, COST_3, callbac
         c[(i, first)] = COST_1
         c[(i, second)] = COST_2
         c[(i, third)] =  COST_3
-
     c=[ [c[(i,j)] for j in N] for i in M ]
 
 
@@ -78,17 +77,18 @@ def assign_students(job_id, Schueler2, Projekt1, COST_1, COST_2, COST_3, callbac
 
 
     def report():
-        print("Total Cost = %g"%vobj()) #### generate dict
+        sum_of_cost = vobj()
+        print("Total Cost = %g"%sum_of_cost) #### generate dict
         # assign = [(i,j) for i in M for j in N 
         #             if x[i,j].primal == 1]
         assign = {Schueler2[i].id:Projekt1[j].id for i in M for j in N 
                     if x[i,j].primal == 1}
         # for i,j in assign:
         #     print("Student %s gets Course %s"%(Schueler2[i].name, Projekt1[j].name))
-        return assign
+        return assign, sum_of_cost
 
 
     solve()
     result = report()
     end()
-    callback(job_id, result)
+    callback(job_id, result[0], result[1])

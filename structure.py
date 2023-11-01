@@ -21,7 +21,7 @@ class Job(database.Model):
     finish = Column(DateTime)
     message = Column(Text)
     started_by = Column(ForeignKey('Person.id'), index = True)
-
+    cost = Column(Integer)
 
     starter = relationship('Person', foreign_keys =[started_by])
 class Workshop(database.Model):

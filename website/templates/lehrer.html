@@ -67,6 +67,7 @@ border: 1px solid rgb(255, 255, 255);
                 <div>Beendet</div>
                 <div>Status</div>
                 <div>Nachricht</div>
+                <div>Cost</div>
             </div>
             {%for j in jobs%}
             <div class="css-table-body">
@@ -76,6 +77,7 @@ border: 1px solid rgb(255, 255, 255);
                     <div>{{j.finish}}</div>
                     <div>{{j.status}}</div>
                     <div>{{j.message}}</div>
+                    <div>{{j.cost}}%</div>
                 </div>
             </div>
             {%endfor%}
